@@ -49,7 +49,7 @@ public class AuthController {
 	private JwtUtil jwtUtil;
 
 	@PostMapping("/register")
-	public ResponseEntity<CommonResponse<String>> register(@Valid @RequestBody RegisterRequest request) {
+	public ResponseEntity<CommonResponse<String>> register(@RequestBody RegisterRequest request) {
 
 	    try {
 	        log.info("Registration for username: {}", request.getUsername());

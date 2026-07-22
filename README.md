@@ -27,7 +27,7 @@ A REST API built with Spring Boot, Spring Data JPA (Hibernate), MySQL, and JWT A
 - Swagger/OpenAPI Documentation
 - Postman Collection
 
-> Full Swagger documentation for all APIs will be added later. This section only covers what's functional so far.
+> Full Swagger documentation for all APIs will be added later.
 
 ## APIs Completed So Far
 
