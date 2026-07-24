@@ -25,8 +25,11 @@ import com.ems.security.JwtUtil;
 import com.ems.security.UserDetailsServiceImpl;
 import com.ems.util.CommonResponse;
 
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 
+@Tag(name = "Authentication", description = "APIs for user registration and login")
 @RestController
 @RequestMapping("/api/auth")
 @RequiredArgsConstructor
@@ -49,8 +52,9 @@ public class AuthController {
     @Autowired
     private JwtUtil jwtUtil;
 
+    @Operation(summary = "Register a new user", description = "Creates a new user account with role ADMIN or USER")
     @PostMapping("/register")
-    public ResponseEntity<CommonResponse<String>> register(@RequestBody RegisterRequest request) {
+    public ResponseEntity<CommonResponse<String>> register(@Valid @RequestBody RegisterRequest request) {
         log.info("Incoming registration request for username: {}", request.getUsername());
 
         if (userRepository.existsByUsername(request.getUsername())) {
@@ -70,8 +74,9 @@ public class AuthController {
         return ResponseEntity.ok(CommonResponse.success("User registered successfully", null));
     }
 
+    @Operation(summary = "Login", description = "Authenticates user credentials and returns a JWT token")
     @PostMapping("/login")
-    public ResponseEntity<CommonResponse<AuthResponse>> login(@RequestBody LoginRequest request) {
+    public ResponseEntity<CommonResponse<AuthResponse>> login(@Valid @RequestBody LoginRequest request) {
         log.info("Incoming login request for username: {}", request.getUsername());
 
         authenticationManager.authenticate(

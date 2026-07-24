@@ -4,6 +4,9 @@ import com.ems.dto.EmployeeRequest;
 import com.ems.dto.EmployeeResponse;
 import com.ems.service.EmployeeService;
 import com.ems.util.CommonResponse;
+
+import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.tags.Tag;
 import jakarta.validation.Valid;
 import lombok.RequiredArgsConstructor;
 import lombok.extern.slf4j.Slf4j;
@@ -15,6 +18,7 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.security.access.prepost.PreAuthorize;
 import org.springframework.web.bind.annotation.*;
 
+@Tag(name = "Employees", description = "APIs for managing employee records")
 @RestController
 @RequestMapping("/api/employees")
 @RequiredArgsConstructor
@@ -23,9 +27,10 @@ public class EmployeeController {
 
 	private final EmployeeService employeeService;
 
+    @Operation(summary = "Create employee", description = "Creates a new employee. Requires ADMIN role.")
 	@PostMapping
 	@PreAuthorize("hasRole('ADMIN')")
-	public ResponseEntity<CommonResponse<EmployeeResponse>> createEmp( @RequestBody EmployeeRequest request) {
+	public ResponseEntity<CommonResponse<EmployeeResponse>> createEmp(@Valid @RequestBody EmployeeRequest request) {
 		log.info("Incoming request to create employee: {}", request.getEmail());
 		
 		EmployeeResponse response = employeeService.createEmployee(request);
@@ -33,6 +38,7 @@ public class EmployeeController {
 		return ResponseEntity.ok(CommonResponse.success("Employee created successfully", response));
 	}
 
+    @Operation(summary = "Get employee by ID")
 	@GetMapping("/{id}")
 	public ResponseEntity<CommonResponse<EmployeeResponse>> getEmpById(@PathVariable Long id) {
 		log.info("Incoming request to fetch employee id: {}", id);
@@ -42,6 +48,7 @@ public class EmployeeController {
 		return ResponseEntity.ok(CommonResponse.success("Employee fetched successfully", response));
 	}
 
+    @Operation(summary = "Get all employees", description = "Supports pagination and sorting, e.g. ?page=0&size=10&sort=salary,desc")
 	@GetMapping
 	public ResponseEntity<CommonResponse<Page<EmployeeResponse>>> getAllEmp(
 			@PageableDefault(size = 10, sort = "employeeId") Pageable pageable) {
@@ -52,6 +59,7 @@ public class EmployeeController {
 		return ResponseEntity.ok(CommonResponse.success("Employees fetched successfully", response));
 	}
 
+    @Operation(summary = "Update employee", description = "Requires ADMIN role.")
 	@PutMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<CommonResponse<EmployeeResponse>> updateEmp(@PathVariable Long id,
@@ -63,6 +71,7 @@ public class EmployeeController {
 		return ResponseEntity.ok(CommonResponse.success("Employee updated successfully", response));
 	}
 
+    @Operation(summary = "Delete employee", description = "Soft delete — sets status to INACTIVE. Requires ADMIN role.")
 	@DeleteMapping("/{id}")
 	@PreAuthorize("hasRole('ADMIN')")
 	public ResponseEntity<CommonResponse<Void>> deleteEmp(@PathVariable Long id) {
@@ -74,6 +83,7 @@ public class EmployeeController {
 		return ResponseEntity.ok(CommonResponse.success("Employee deleted successfully", null));
 	}
 
+    @Operation(summary = "Search employees by name (partial match)")
 	@GetMapping("/search/name")
 	public ResponseEntity<CommonResponse<Page<EmployeeResponse>>> searchEmpByName(@RequestParam String name,
 			@PageableDefault(size = 10, sort = "employeeId") Pageable pageable) {
@@ -84,6 +94,7 @@ public class EmployeeController {
 		return ResponseEntity.ok(CommonResponse.success("Search results fetched", response));
 	}
 
+    @Operation(summary = "Search employees by department name (partial match)")
 	@GetMapping("/search/department")
 	public ResponseEntity<CommonResponse<Page<EmployeeResponse>>> searchEmpByDepartment(
 			@RequestParam String departmentName, @PageableDefault(size = 10, sort = "employeeId") Pageable pageable) {

@@ -90,7 +90,7 @@ public class GlobalExceptionHandler {
 
 	@ExceptionHandler(Exception.class)
 	public ResponseEntity<CommonResponse<Object>> handleGenericException(Exception ex, WebRequest request) {
-		log.error("Unhandled exception occurred", ex); // full stack trace, this one's a real bug if it fires
+		log.error("Unhandled exception occurred", ex); 
 		return buildResponse(HttpStatus.INTERNAL_SERVER_ERROR, "An unexpected error occurred");
 	}
 
