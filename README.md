@@ -1,30 +1,33 @@
 # Employee Management System
 
-## Tech Stack
+#### Backend : Railway.app
+#### Frontend : vercel
 
-- Java 17
-- Spring Boot
-- Spring Data JPA (Hibernate)
-- MySQL
-- Spring Security + JWT
-- Lombok
-- Bean Validation
-- Maven
+| Component | URL |
+|---|---|
+| Swagger / API Docs | https://employee-management-system-production-9d88.up.railway.app/swagger-ui/index.html |
+| Frontend (React) | https://employee-management-system-sand-omega.vercel.app |
 
+### Tech Stack
 
-**Completed:**
+**Backend:** Java 17, Spring Boot, Spring Data JPA (Hibernate), MySQL, Spring Security + JWT, Lombok, Bean Validation, Maven, Swagger/OpenAPI
+
+**Frontend:** React 18 (Vite), react-router-dom, axios
+
+### Status: Completed
+
 - Project setup and layered architecture (controller, service, repository, entity, dto, config, security, exception, util)
 - `Employee` and `Department` entities with One-to-Many / Many-to-One relationship
-- JWT-based Authentication (Register, Login, Role-based access: ADMIN / USER)
-- Employee CRUD APIs
-- Bean Validation on all Employee and Auth request fields with meaningful error messages
-- Global Exception Handling
-- SLF4J logging
-- JUnit tests
-
-**Planned:**
-- Swagger/OpenAPI documentation
-- Postman collection export
+- JWT-based Authentication: Register, Login, Token generation & validation, BCrypt password encryption, Role-based access (ADMIN / USER)
+- Employee CRUD APIs: Create, Get by ID, Get All, Update, Soft Delete, Search by Name, Search by Department, Pagination and Sorting
+- Department APIs: Create, Get All
+- Bean Validation on all request fields with meaningful error messages
+- Global Exception Handling (`@ControllerAdvice`): standardized error responses for Resource Not Found, Duplicate Record, Validation, Unauthorized, and Forbidden cases
+- SLF4J logging for incoming requests, successful operations, and exceptions
+- Swagger/OpenAPI documentation for all endpoints
+- JUnit tests for JWT utility, user details service, and Employee service
+- Basic React frontend (login, employee CRUD, department view) connected via REST
+- Deployed: Spring Boot and MySQL on Railway, React frontend on Vercel
 
 ## Common API Response Format
 
@@ -35,7 +38,7 @@ Every API returns a consistent response shape, on both success and failure:
   "success": true,
   "message": "Employee created successfully",
   "data": {},
-  "timestamp": "2026-07-23T10:30:00"
+  "timestamp": "2026-07-24T10:30:00"
 }
 ```
 
@@ -45,14 +48,12 @@ On errors, `success` is `false`, `data` is typically `null` (or a list of field 
 
 ### 1. Register — `POST /api/auth/register`
 
-Creates a new user account with a role (`ADMIN` or `USER`).
-
 **Request Body**
 ```json
 {
-  "username": "admin1",
-  "password": "Pass@123",
-  "role": "ADMIN"
+  "username": "priya.sharma",
+  "password": "SecurePass@456",
+  "role": "USER"
 }
 ```
 
@@ -62,19 +63,19 @@ Creates a new user account with a role (`ADMIN` or `USER`).
   "success": true,
   "message": "User registered successfully",
   "data": null,
-  "timestamp": "2026-07-22T10:30:00"
+  "timestamp": "2026-07-24T09:15:00"
 }
 ```
 
 ### 2. Login — `POST /api/auth/login`
 
-Authenticates a user and returns a JWT token to be used in the `Authorization` header (`Bearer <token>`) for all protected endpoints.
+Returns a JWT token to be used in the `Authorization` header (`Bearer <token>`) for all protected endpoints.
 
 **Request Body**
 ```json
 {
-  "username": "admin1",
-  "password": "Pass@123"
+  "username": "priya.sharma",
+  "password": "SecurePass@456"
 }
 ```
 
@@ -84,11 +85,11 @@ Authenticates a user and returns a JWT token to be used in the `Authorization` h
   "success": true,
   "message": "Login successful",
   "data": {
-    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJhZG1pbjEi...",
-    "username": "admin1",
-    "role": "ROLE_ADMIN"
+    "token": "eyJhbGciOiJIUzI1NiJ9.eyJzdWIiOiJwcml5YS5zaGFybWEi...",
+    "username": "priya.sharma",
+    "role": "ROLE_USER"
   },
-  "timestamp": "2026-07-22T10:31:00"
+  "timestamp": "2026-07-24T09:16:00"
 }
 ```
 
@@ -96,8 +97,15 @@ Authenticates a user and returns a JWT token to be used in the `Authorization` h
 
 | Method | Endpoint | Access | Description |
 |---|---|---|---|
-| POST | `/api/departments` | ADMIN | Create a department |
-| GET | `/api/departments` | Authenticated | Get all departments |
+| POST | `/api/department` | ADMIN | Create a department |
+| GET | `/api/department` | Authenticated | Get all departments |
+
+**Example — Create Department**
+```json
+{
+  "departmentName": "Finance"
+}
+```
 
 ## Employee APIs
 
@@ -118,34 +126,34 @@ All endpoints require a valid JWT (`Authorization: Bearer <token>`). Write opera
 **Request Body**
 ```json
 {
-    "employeeName" : "John Doe",
-    "email" : "johndoe123@gmail.com",
-    "mobileNumber" : "1234907892",
-    "designation" : "Intern",
-    "salary" : 120000.00,
-    "dateOfJoining" : "2026-07-23",
-    "departmentId": 3
+  "employeeName": "Ananya Iyer",
+  "email": "ananya.iyer@example.com",
+  "mobileNumber": "9123456780",
+  "designation": "Business Analyst",
+  "salary": 62000,
+  "dateOfJoining": "2023-11-10",
+  "departmentId": 2
 }
 ```
 
 **Response**
 ```json
 {
-    "success": true,
-    "message": "Employee created successfully",
-    "data": {
-        "employeeId": 3,
-        "employeeName": "John Doe",
-        "email": "johndoe123@gmail.com",
-        "mobileNumber": "1234907892",
-        "designation": "Intern",
-        "salary": 120000.0,
-        "dateOfJoining": "2026-07-23",
-        "status": "ACTIVE",
-        "departmentId": 3,
-        "departmentName": "Botanical"
-    },
-    "timestamp": "2026-07-23T17:56:46.0765817"
+  "success": true,
+  "message": "Employee created successfully",
+  "data": {
+    "employeeId": 7,
+    "employeeName": "Ananya Iyer",
+    "email": "ananya.iyer@example.com",
+    "mobileNumber": "9123456780",
+    "designation": "Business Analyst",
+    "salary": 62000,
+    "dateOfJoining": "2023-11-10",
+    "status": "ACTIVE",
+    "departmentId": 2,
+    "departmentName": "Finance"
+  },
+  "timestamp": "2026-07-24T09:20:00"
 }
 ```
 
@@ -154,9 +162,12 @@ All endpoints require a valid JWT (`Authorization: Bearer <token>`). Write opera
 GET /api/employees?page=0&size=10&sort=salary,desc
 ```
 
-## Error Handling
+**Search example:**
+```
+GET /api/employees/search/department?departmentName=Finance
+```
 
-All exceptions are handled centrally and return the standard response format above with an appropriate HTTP status:
+## Error Handling
 
 | Scenario | Status |
 |---|---|
@@ -173,9 +184,19 @@ All exceptions are handled centrally and return the standard response format abo
   "success": false,
   "message": "Validation failed",
   "data": [
-    { "field": "email", "message": "Email must be a valid email address" },
-    { "field": "mobileNumber", "message": "Mobile number must contain exactly 10 digits" }
+    { "field": "mobileNumber", "message": "Mobile number must contain exactly 10 digits" },
+    { "field": "salary", "message": "Salary must be a positive value" }
   ],
-  "timestamp": "2026-07-23T10:05:00"
+  "timestamp": "2026-07-24T09:25:00"
+}
+```
+
+**Example: Resource Not Found**
+```json
+{
+  "success": false,
+  "message": "Employee not found with id: 99",
+  "data": null,
+  "timestamp": "2026-07-24T09:26:00"
 }
 ```
